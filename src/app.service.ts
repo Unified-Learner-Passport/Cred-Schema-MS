@@ -3,6 +3,7 @@ import { PrismaService } from './prisma.service';
 import { VerifiableCredentialSchema, Prisma } from '@prisma/client';
 import { validate } from './utils/schema-validator';
 import { DefinedError } from 'ajv';
+import { SchemaType } from './types/SchemaType';
 @Injectable()
 export class AppService {
   constructor(private prisma: PrismaService) {}
@@ -33,13 +34,20 @@ export class AppService {
   }
 
   async createCredentialSchema(
-    data: Prisma.VerifiableCredentialSchemaCreateInput,
+    data: SchemaType,
   ): Promise<VerifiableCredentialSchema> {
     // verify the Credential Schema
-    const schemaObject = JSON.parse(data.schema as string);
-    if (validate(schemaObject)) {
+    if (validate(data)) {
+      // const schemaObject = JSON.parse(data.schema as string);
       return this.prisma.verifiableCredentialSchema.create({
-        data,
+        data: {
+          name: data.name as string,
+          description: data.schema.description,
+          type: data?.type as string,
+          schema: data.schema as Prisma.JsonValue,
+          tags: data?.tags as string[],
+          version: 1,
+        },
       });
     } else {
       for (const err of validate.errors as DefinedError[]) {
@@ -50,7 +58,7 @@ export class AppService {
 
   async updateCredentialSchema(params: {
     where: Prisma.VerifiableCredentialSchemaWhereUniqueInput;
-    data: Prisma.VerifiableCredentialSchemaUpdateInput;
+    data: SchemaType;
   }): Promise<VerifiableCredentialSchema> {
     const { where, data } = params;
     const currentSchema =
@@ -58,16 +66,22 @@ export class AppService {
         where,
       });
     if (currentSchema) {
-      return this.prisma.verifiableCredentialSchema.create({
-        data: {
-          name: data.name as string,
-          description: data.description as string,
-          type: data.type as string,
-          schema: data.schema as string,
-          tags: data.tags as string[],
-          version: currentSchema.version + 1,
-        },
-      });
+      if (validate(data)) {
+        return this.prisma.verifiableCredentialSchema.create({
+          data: {
+            name: data.name as string,
+            description: data.schema.description,
+            type: data.type as string,
+            schema: data.schema as Prisma.JsonValue,
+            tags: data.tags as string[],
+            version: currentSchema.version + 1,
+          },
+        });
+      } else {
+        for (const err of validate.errors as DefinedError[]) {
+          throw new Error(err.message);
+        }
+      }
     } else {
       throw new Error('Credential Schema not found');
     }

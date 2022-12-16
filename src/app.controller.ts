@@ -1,6 +1,16 @@
-import { Body, Controller, Get, Param, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  Patch,
+  Post,
+  Query,
+} from '@nestjs/common';
 import { Prisma } from '@prisma/client';
+import { query } from 'express';
 import { AppService } from './app.service';
+import { SchemaType } from './types/SchemaType';
 
 @Controller()
 export class AppController {
@@ -8,16 +18,23 @@ export class AppController {
 
   // get the credential schema
   @Get()
-  getCredentialSchema(
-    @Param('id') id: Prisma.VerifiableCredentialSchemaWhereUniqueInput,
-  ) {
-    return this.appService.credentialSchema(id);
+  getCredentialSchema(@Query() query) {
+    console.log('id: ', query.id);
+    return this.appService.credentialSchema({ id: query.id });
   }
 
   @Post()
-  createCredentialSchema(
-    @Body() body: Prisma.VerifiableCredentialSchemaCreateInput,
-  ) {
+  createCredentialSchema(@Body() body: SchemaType) {
     return this.appService.createCredentialSchema(body);
+  }
+
+  @Patch()
+  updateCredentialSchema(@Query() query, @Body() data: SchemaType) {
+    console.log('id: ', query.id);
+    console.log('body: ', data);
+    return this.appService.updateCredentialSchema({
+      where: { id: query.id },
+      data,
+    });
   }
 }
