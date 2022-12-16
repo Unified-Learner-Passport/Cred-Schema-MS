@@ -1,10 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from './prisma.service';
 import { VerifiableCredentialSchema, Prisma } from '@prisma/client';
-
+import { validate } from './utils/schema-validator';
+import { DefinedError } from 'ajv';
 @Injectable()
 export class AppService {
-  constructor(private prisma: PrismaService) { }
+  constructor(private prisma: PrismaService) {}
 
   async credentialSchema(
     userWhereUniqueInput: Prisma.VerifiableCredentialSchemaWhereUniqueInput,
@@ -36,10 +37,15 @@ export class AppService {
   ): Promise<VerifiableCredentialSchema> {
     // verify the Credential Schema
     const schemaObject = JSON.parse(data.schema as string);
-
-    return this.prisma.verifiableCredentialSchema.create({
-      data,
-    });
+    if (validate(schemaObject)) {
+      return this.prisma.verifiableCredentialSchema.create({
+        data,
+      });
+    } else {
+      for (const err of validate.errors as DefinedError[]) {
+        throw new Error(err.message);
+      }
+    }
   }
 
   async updateCredentialSchema(params: {
