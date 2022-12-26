@@ -2,6 +2,7 @@ import Ajv, { DefinedError } from 'ajv';
 
 const ajv = new Ajv();
 
+// link to schema:  https://w3c-ccg.github.io/vc-json-schemas/#credential_schema
 const schema = {
   $schema: 'http://json-schema.org/draft-07/schema#',
   type: 'object',
