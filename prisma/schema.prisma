@@ -6,14 +6,15 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider          = "postgresql"
+  url               = env("DATABASE_URL")
+  shadowDatabaseUrl = env("SHADOW_DATABASE_URL")
 }
 
 model VerifiableCredentialSchema {
   id        String    @id @default(cuid())
   type      String
-  version   Int
+  version   String
   name      String
   author    String
   authored  DateTime

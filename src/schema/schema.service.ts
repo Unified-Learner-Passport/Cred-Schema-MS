@@ -5,6 +5,7 @@ import schemas from './schemas';
 import { validate } from '../utils/schema.validator';
 import { DefinedError } from 'ajv';
 import { VCSchema } from '../types/VCSchema';
+import { CreateCredentialDTO } from './dto/create-credentials.dto';
 
 @Injectable()
 export class SchemaService {
@@ -47,19 +48,23 @@ export class SchemaService {
   }
 
   async createCredentialSchema(
-    data: VCSchema,
+    createCredentialDTO: CreateCredentialDTO,
   ): Promise<VerifiableCredentialSchema> {
+    const data = createCredentialDTO.vcSchema;
     // verify the Credential Schema
     if (validate(data)) {
       // const schemaObject = JSON.parse(data.schema as string);
       return this.prisma.verifiableCredentialSchema.create({
         data: {
-          name: data.name as string,
-          description: data.schema.description,
+          id: data.id,
           type: data?.type as string,
+          version: data.version,
+          name: data.name as string,
+          author: data.author as string,
+          authored: data.authored,
           schema: data.schema as Prisma.JsonValue,
+          proof: data?.proof as Prisma.JsonValue,
           tags: data?.tags as string[],
-          version: 1,
         },
       });
     } else {
@@ -78,16 +83,21 @@ export class SchemaService {
       await this.prisma.verifiableCredentialSchema.findUnique({
         where,
       });
+
     if (currentSchema) {
       if (validate(data)) {
-        return this.prisma.verifiableCredentialSchema.create({
+        return this.prisma.verifiableCredentialSchema.update({
+          where,
           data: {
+            id: data.id,
+            type: data?.type as string,
+            version: data.version,
             name: data.name as string,
-            description: data.schema.description,
-            type: data.type as string,
+            author: data.author as string,
+            authored: data.authored,
             schema: data.schema as Prisma.JsonValue,
-            tags: data.tags as string[],
-            version: currentSchema.version + 1,
+            proof: data?.proof as Prisma.JsonValue,
+            tags: data?.tags as string[],
           },
         });
       } else {
