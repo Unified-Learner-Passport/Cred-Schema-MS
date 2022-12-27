@@ -1,10 +1,12 @@
 export interface SchemaType {
   type: string;
-  modelVersion: string;
+  version: string;
+  id: string;
   name: string;
   author: string;
   authored: string;
   schema: {
+    $id: string;
     $schema: string;
     description: string;
     name?: string;
@@ -16,12 +18,7 @@ export interface SchemaType {
     additionalProperties: boolean;
     [k: string]: unknown;
   };
-  proof: {
-    created: string;
-    creator: string;
-    nonce: string;
-    signatureValue: string;
-    type: string;
+  proof?: {
     [k: string]: unknown;
   };
   [k: string]: unknown;
