@@ -1,14 +1,4 @@
-import {
-  Body,
-  Controller,
-  Get,
-  Param,
-  Patch,
-  Post,
-  Query,
-} from '@nestjs/common';
-import { Prisma } from '@prisma/client';
-import { query } from 'express';
+import { Body, Controller, Get, Patch, Post, Query } from '@nestjs/common';
 import { AppService } from './app.service';
 import { SchemaType } from './types/SchemaType';
 
