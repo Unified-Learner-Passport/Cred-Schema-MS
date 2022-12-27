@@ -4,7 +4,7 @@ import { PrismaService } from 'src/prisma.service';
 import schemas from './schemas';
 import { validate } from '../utils/schema.validator';
 import { DefinedError } from 'ajv';
-import { SchemaType } from '../types/SchemaType';
+import { VCSchema } from '../types/VCSchema';
 
 @Injectable()
 export class SchemaService {
@@ -47,7 +47,7 @@ export class SchemaService {
   }
 
   async createCredentialSchema(
-    data: SchemaType,
+    data: VCSchema,
   ): Promise<VerifiableCredentialSchema> {
     // verify the Credential Schema
     if (validate(data)) {
@@ -71,7 +71,7 @@ export class SchemaService {
 
   async updateCredentialSchema(params: {
     where: Prisma.VerifiableCredentialSchemaWhereUniqueInput;
-    data: SchemaType;
+    data: VCSchema;
   }): Promise<VerifiableCredentialSchema> {
     const { where, data } = params;
     const currentSchema =

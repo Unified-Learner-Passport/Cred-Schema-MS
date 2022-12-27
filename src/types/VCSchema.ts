@@ -1,4 +1,4 @@
-export interface SchemaType {
+export interface VCSchema {
   type: string;
   version: string;
   id: string;
