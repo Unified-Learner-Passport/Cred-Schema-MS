@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from './prisma.service';
 import { VerifiableCredentialSchema, Prisma } from '@prisma/client';
-import { validate } from './utils/schema-validator';
+import { validate } from './utils/schema.validator';
 import { DefinedError } from 'ajv';
 import { SchemaType } from './types/SchemaType';
 @Injectable()

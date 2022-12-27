@@ -29,7 +29,9 @@
 ## Installation
 
 ```bash
+
 $ npm install
+
 ```
 
 ## Running the app
@@ -71,3 +73,9 @@ Nest is an MIT-licensed open source project. It can grow thanks to the sponsors 
 ## License
 
 Nest is [MIT licensed](LICENSE).
+
+## Reference Links
+
+- [W3C Credential Schema (Currently being used)](https://w3c-ccg.github.io/vc-json-schemas/schema/2.0/schema.json)
+- [W3C Credential Schema (initially used)](https://w3c-ccg.github.io/vc-json-schemas/schema/1.0/schema.json)
+- [W3C JSON Schemas Website](https://w3c-ccg.github.io/vc-json-schemas/)

@@ -15,7 +15,10 @@ import { SchemaType } from './types/SchemaType';
 @Controller()
 export class AppController {
   constructor(private readonly appService: AppService) {}
-
+  @Get('/health')
+  getHello(): string {
+    return 'Hello World!';
+  }
   // get the credential schema
   @Get()
   getCredentialSchema(@Query() query) {
