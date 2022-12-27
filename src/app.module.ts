@@ -1,9 +1,9 @@
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { PrismaService } from './prisma.service';
 import { SchemaService } from './schema/schema.service';
 import { SchemaModule } from './schema/schema.module';
+import { PrismaService } from './prisma.service';
 
 @Module({
   imports: [SchemaModule],
