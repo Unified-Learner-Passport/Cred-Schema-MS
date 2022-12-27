@@ -21,7 +21,7 @@
         "type": "string",
         "description": "The skill for which the holder was trained."
       },
-      "certifyingInstitution": {
+      "certifyingInstitute": {
         "type": "string",
         "description": "Name of the instute which certified the holder being skilled in the said skill"
       },
@@ -30,12 +30,7 @@
         "description": "Name of the institute which organised the training."
       }
     },
-    "required": [
-      "score",
-      "examinationName",
-      "releasingInstitution",
-      "organisingInstitute"
-    ],
+    "required": ["skill", "releasingInstitute", "trainingInstitute"],
     "additionalProperties": false
   },
   "proof": {
