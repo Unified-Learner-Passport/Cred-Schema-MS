@@ -1,4 +1,4 @@
-export interface VCSchema {
+export interface VCSModelSchemaInterface {
   type: string;
   version: string;
   id: string;
@@ -16,10 +16,8 @@ export interface VCSchema {
     };
     required: [] | [string];
     additionalProperties: boolean;
-    [k: string]: unknown;
   };
   proof?: {
     [k: string]: unknown;
   };
-  [k: string]: unknown;
 }

@@ -14,6 +14,7 @@ import { ConfigModule } from '@nestjs/config';
     }),
     CacheModule.register({
       isGlobal: true,
+      max: 1000,
     }), // using in memory cache for now
   ],
   controllers: [AppController],

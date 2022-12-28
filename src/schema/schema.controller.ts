@@ -11,13 +11,22 @@ import {
   Query,
   UseInterceptors,
 } from '@nestjs/common';
-import { ApiOperation, ApiResponse } from '@nestjs/swagger';
+import {
+  ApiBadRequestResponse,
+  ApiBody,
+  ApiCreatedResponse,
+  ApiNotFoundResponse,
+  ApiOkResponse,
+  ApiOperation,
+  ApiParam,
+  ApiQuery,
+} from '@nestjs/swagger';
 import { VerifiableCredentialSchema } from '@prisma/client';
 import { Cache } from 'cache-manager';
 
-import { VCSchema } from 'src/types/VCSchema';
-import { CreateCredentialDTO } from './dto/create-credentials.dto';
+import { VCSModelSchemaInterface } from 'src/types/VCModelSchema.interface';
 import { VCItem } from './entities/VCItem.entity';
+import { VCModelSchema } from './entities/VCModelSchema.entity';
 import { SchemaService } from './schema.service';
 
 @Controller('schema')
@@ -30,17 +39,34 @@ export class SchemaController {
 
   // this should be public
   @Get(':id')
+  @ApiParam({
+    name: 'id',
+    required: true,
+    type: String,
+    description: 'name of the json schema files stored on the server',
+  })
+  @ApiOkResponse({ type: VCModelSchema })
+  @ApiNotFoundResponse({
+    status: 404,
+    description:
+      'The record with the passed query param id has not been found.',
+  })
   getSchema(@Param('id') id: string) {
     return this.schemaService.getSchema(id);
   }
 
   // TODO: Add role based guards here
   @Get()
-  @ApiOperation({ summary: 'Create a new Verifiable Credential Schema' })
-  @ApiResponse({
+  @ApiQuery({ name: 'id', required: true, type: String })
+  @ApiOperation({ summary: 'Get a Verifiable Credential Schema by id (did)' })
+  @ApiOkResponse({
     status: 200,
     description: 'The record has been successfully created.',
     type: VCItem,
+  })
+  @ApiNotFoundResponse({
+    status: 404,
+    description: 'The record has not been found.',
   })
   getCredentialSchema(@Query() query) {
     console.log('id: ', query.id);
@@ -50,26 +76,51 @@ export class SchemaController {
   // TODO: Add role based guards here
   @Post()
   @ApiOperation({ summary: 'Create a new Verifiable Credential Schema' })
-  @ApiResponse({
+  @ApiBody({
+    type: VCModelSchema,
+  })
+  @ApiCreatedResponse({
     status: 201,
     description: 'The record has been successfully created.',
     type: VCItem,
   })
+  @ApiBadRequestResponse({
+    status: 400,
+    description: 'There was some prioblem with the request.',
+  })
   createCredentialSchema(
-    @Body() body: CreateCredentialDTO,
+    @Body() body: VCModelSchema,
   ): Promise<VerifiableCredentialSchema> {
     return this.schemaService.createCredentialSchema(body);
   }
 
   // TODO: Add role based guards here
   @Patch()
-  @ApiOperation({ summary: 'Create a new Verifiable Credential Schema' })
-  @ApiResponse({
+  @ApiQuery({ name: 'id', required: true, type: String })
+  @ApiBody({
+    type: VCModelSchema,
+  })
+  @ApiOperation({
+    summary: 'Update a Verifiable Credential Schema by id (did)',
+  })
+  @ApiOkResponse({
     status: 200,
     description: 'The record has been successfully updated.',
     type: VCItem,
   })
-  updateCredentialSchema(@Query() query, @Body() data: VCSchema) {
+  @ApiNotFoundResponse({
+    status: 404,
+    description:
+      'The record with the passed query param id has not been found.',
+  })
+  @ApiBadRequestResponse({
+    status: 400,
+    description: 'There was some prioblem with the request.',
+  })
+  updateCredentialSchema(
+    @Query() query,
+    @Body() data: VCSModelSchemaInterface,
+  ) {
     console.log('id: ', query.id);
     console.log('body: ', data);
     return this.schemaService.updateCredentialSchema({

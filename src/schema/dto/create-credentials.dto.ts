@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { VCSchema } from 'src/types/VCSchema';
+import { VCSModelSchemaInterface } from 'src/types/VCModelSchema.interface';
 import { VCItem } from '../entities/VCItem.entity';
 
 export class CreateCredentialDTO {
-  vcSchema: VCSchema;
+  vcSchema: VCSModelSchemaInterface;
 }

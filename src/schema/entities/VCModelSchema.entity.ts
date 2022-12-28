@@ -1,7 +1,8 @@
-import { ApiProperty } from '@nestjs/swagger';
-import { VCSchema } from 'src/types/VCSchema';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { VCSModelSchemaInterface } from 'src/types/VCModelSchema.interface';
+import { VCSchema } from './VCSchema.entity';
 
-export class VCModelSchema implements VCSchema {
+export class VCModelSchema implements VCSModelSchemaInterface {
   @ApiProperty({ type: String, description: 'id' })
   type: string;
   @ApiProperty({ type: String, description: 'version' })
@@ -14,7 +15,7 @@ export class VCModelSchema implements VCSchema {
   author: string;
   @ApiProperty({ type: String, description: 'authored' })
   authored: string;
-  @ApiProperty({ type: JSON, description: 'schema' })
+  @ApiProperty({ type: VCSchema, description: 'schema' })
   schema: {
     $id: string;
     $schema: string;
@@ -28,6 +29,9 @@ export class VCModelSchema implements VCSchema {
     additionalProperties: boolean;
     [k: string]: unknown;
   };
+  @ApiPropertyOptional({
+    type: JSON,
+  })
   proof?: {
     [k: string]: unknown;
   };

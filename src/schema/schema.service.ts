@@ -1,11 +1,15 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { Prisma, VerifiableCredentialSchema } from '@prisma/client';
 import { PrismaService } from 'src/prisma.service';
 import schemas from './schemas';
 import { validate } from '../utils/schema.validator';
 import { DefinedError } from 'ajv';
-import { VCSchema } from '../types/VCSchema';
-import { CreateCredentialDTO } from './dto/create-credentials.dto';
+import { VCSModelSchemaInterface } from '../types/VCModelSchema.interface';
+import { VCModelSchema } from './entities/VCModelSchema.entity';
 
 @Injectable()
 export class SchemaService {
@@ -18,76 +22,44 @@ export class SchemaService {
       );
     }
 
-    const data = schemas[fileName];
-    return data;
+    return schemas[fileName];
   }
 
-  async credentialSchemas(params: {
-    skip?: number;
-    take?: number;
-    cursor?: Prisma.VerifiableCredentialSchemaWhereUniqueInput;
-    where?: Prisma.VerifiableCredentialSchemaWhereInput;
-    orderBy?: Prisma.VerifiableCredentialSchemaOrderByWithRelationInput;
-  }): Promise<VerifiableCredentialSchema[]> {
-    const { skip, take, cursor, where, orderBy } = params;
-    return this.prisma.verifiableCredentialSchema.findMany({
-      skip,
-      take,
-      cursor,
-      where,
-      orderBy,
-    });
-  }
+  /*  async credentialSchemas(params: {
+      skip?: number;
+      take?: number;
+      cursor?: Prisma.VerifiableCredentialSchemaWhereUniqueInput;
+      where?: Prisma.VerifiableCredentialSchemaWhereInput;
+      orderBy?: Prisma.VerifiableCredentialSchemaOrderByWithRelationInput;
+    }): Promise<VerifiableCredentialSchema[]> {
+      const { skip, take, cursor, where, orderBy } = params;
+      return this.prisma.verifiableCredentialSchema.findMany({
+        skip,
+        take,
+        cursor,
+        where,
+        orderBy,
+      });
+    }*/
 
   async credentialSchema(
     userWhereUniqueInput: Prisma.VerifiableCredentialSchemaWhereUniqueInput,
-  ): Promise<VerifiableCredentialSchema | null> {
-    return this.prisma.verifiableCredentialSchema.findUnique({
+  ): Promise<VerifiableCredentialSchema> {
+    const schema = await this.prisma.verifiableCredentialSchema.findUnique({
       where: userWhereUniqueInput,
     });
+
+    if (schema) return schema;
+    else throw new NotFoundException('Schema not found');
   }
 
   async createCredentialSchema(
-    createCredentialDTO: CreateCredentialDTO,
+    data: VCModelSchema,
   ): Promise<VerifiableCredentialSchema> {
-    const data = createCredentialDTO.vcSchema;
     // verify the Credential Schema
     if (validate(data)) {
-      // const schemaObject = JSON.parse(data.schema as string);
-      return this.prisma.verifiableCredentialSchema.create({
-        data: {
-          id: data.id,
-          type: data?.type as string,
-          version: data.version,
-          name: data.name as string,
-          author: data.author as string,
-          authored: data.authored,
-          schema: data.schema as Prisma.JsonValue,
-          proof: data?.proof as Prisma.JsonValue,
-          tags: data?.tags as string[],
-        },
-      });
-    } else {
-      for (const err of validate.errors as DefinedError[]) {
-        throw new Error(err.message);
-      }
-    }
-  }
-
-  async updateCredentialSchema(params: {
-    where: Prisma.VerifiableCredentialSchemaWhereUniqueInput;
-    data: VCSchema;
-  }): Promise<VerifiableCredentialSchema> {
-    const { where, data } = params;
-    const currentSchema =
-      await this.prisma.verifiableCredentialSchema.findUnique({
-        where,
-      });
-
-    if (currentSchema) {
-      if (validate(data)) {
-        return this.prisma.verifiableCredentialSchema.update({
-          where,
+      try {
+        return await this.prisma.verifiableCredentialSchema.create({
           data: {
             id: data.id,
             type: data?.type as string,
@@ -100,13 +72,51 @@ export class SchemaService {
             tags: data?.tags as string[],
           },
         });
+      } catch (err) {
+        throw new BadRequestException(err.message);
+      }
+    } else {
+      for (const err of validate.errors as DefinedError[]) {
+        throw new BadRequestException(err.message);
+      }
+    }
+  }
+
+  async updateCredentialSchema(params: {
+    where: Prisma.VerifiableCredentialSchemaWhereUniqueInput;
+    data: VCSModelSchemaInterface;
+  }): Promise<VerifiableCredentialSchema> {
+    const { where, data } = params;
+    const currentSchema =
+      await this.prisma.verifiableCredentialSchema.findUnique({
+        where,
+      });
+    if (currentSchema) {
+      if (validate(data)) {
+        try {
+          return await this.prisma.verifiableCredentialSchema.update({
+            where,
+            data: {
+              id: data.id,
+              type: data?.type as string,
+              version: data.version,
+              name: data.name as string,
+              author: data.author as string,
+              authored: data.authored,
+              schema: data.schema as Prisma.JsonValue,
+              proof: data?.proof as Prisma.JsonValue,
+            },
+          });
+        } catch (err) {
+          throw new BadRequestException(err.message);
+        }
       } else {
         for (const err of validate.errors as DefinedError[]) {
-          throw new Error(err.message);
+          throw new BadRequestException(err.message);
         }
       }
     } else {
-      throw new Error('Credential Schema not found');
+      throw new NotFoundException('Credential Schema not found');
     }
   }
 }
