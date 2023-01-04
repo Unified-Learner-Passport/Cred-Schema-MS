@@ -1,7 +1,7 @@
 node() {
     properties([
         parameters([
-            string(name: 'docker_repo', defaultValue: 'credential-ms', description: 'credential-ms'),
+            string(name: 'docker_repo', defaultValue: 'cred-schema-ms', description: 'cred-schema-ms'),
             string(name: 'docker_server', defaultValue: 'localhost:5000', description: 'Docker Registry URL'),
 
         ])
