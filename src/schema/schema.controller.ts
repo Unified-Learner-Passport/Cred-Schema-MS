@@ -25,6 +25,7 @@ import { VerifiableCredentialSchema } from '@prisma/client';
 import { Cache } from 'cache-manager';
 
 import { VCSModelSchemaInterface } from 'src/types/VCModelSchema.interface';
+import { CreateCredentialDTO } from './dto/create-credentials.dto';
 import { VCItem } from './entities/VCItem.entity';
 import { VCModelSchema } from './entities/VCModelSchema.entity';
 import { SchemaService } from './schema.service';
@@ -56,7 +57,7 @@ export class SchemaController {
   }
 
   // TODO: Add role based guards here
-  @Get()
+  @Get('/jsonld')
   @ApiQuery({ name: 'id', required: true, type: String })
   @ApiOperation({ summary: 'Get a Verifiable Credential Schema by id (did)' })
   @ApiOkResponse({
@@ -71,6 +72,27 @@ export class SchemaController {
   getCredentialSchema(@Query() query) {
     console.log('id: ', query.id);
     return this.schemaService.credentialSchema({ id: query.id });
+  }
+
+  @Get()
+  @ApiQuery({ name: 'id', required: true, type: String })
+  @ApiOperation({ summary: 'Get a Verifiable Credential Schema by id (did)' })
+  @ApiOkResponse({
+    status: 200,
+    description: 'The record has been successfully created.',
+    type: VCItem,
+  })
+  @ApiNotFoundResponse({
+    status: 404,
+    description: 'The record has not been found.',
+  })
+  getCredentialSchemaByTags(@Query() query) {
+    console.log('tags: ', query.tags);
+    console.log('typeof tags: ', typeof query.tags);
+    console.log(query.tags instanceof Array);
+    return this.schemaService.getSchemaByTags(
+      query.tags.slice(1, -1).split(','),
+    );
   }
 
   // TODO: Add role based guards here
@@ -89,7 +111,7 @@ export class SchemaController {
     description: 'There was some prioblem with the request.',
   })
   createCredentialSchema(
-    @Body() body: VCModelSchema,
+    @Body() body: CreateCredentialDTO,
   ): Promise<VerifiableCredentialSchema> {
     return this.schemaService.createCredentialSchema(body);
   }

@@ -10,6 +10,7 @@ import { validate } from '../utils/schema.validator';
 import { DefinedError } from 'ajv';
 import { VCSModelSchemaInterface } from '../types/VCModelSchema.interface';
 import { VCModelSchema } from './entities/VCModelSchema.entity';
+import { CreateCredentialDTO } from './dto/create-credentials.dto';
 
 @Injectable()
 export class SchemaService {
@@ -54,9 +55,12 @@ export class SchemaService {
   }
 
   async createCredentialSchema(
-    data: VCModelSchema,
+    createCredentialDto: CreateCredentialDTO,
   ): Promise<VerifiableCredentialSchema> {
     // verify the Credential Schema
+    const data = createCredentialDto.schema;
+    const tags = createCredentialDto.tags;
+
     if (validate(data)) {
       try {
         return await this.prisma.verifiableCredentialSchema.create({
@@ -69,7 +73,7 @@ export class SchemaService {
             authored: data.authored,
             schema: data.schema as Prisma.JsonValue,
             proof: data?.proof as Prisma.JsonValue,
-            tags: data?.tags as string[],
+            tags: tags as string[],
           },
         });
       } catch (err) {
@@ -118,5 +122,16 @@ export class SchemaService {
     } else {
       throw new NotFoundException('Credential Schema not found');
     }
+  }
+
+  async getSchemaByTags(tags: string[]): Promise<VerifiableCredentialSchema[]> {
+    console.log('tags in service: ', tags);
+    return await this.prisma.verifiableCredentialSchema.findMany({
+      where: {
+        tags: {
+          hasSome: [...tags],
+        },
+      },
+    });
   }
 }
