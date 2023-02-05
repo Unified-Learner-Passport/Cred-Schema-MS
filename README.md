@@ -11,9 +11,7 @@
 $ npm install
 
 ```
-
 OR
-
 ```bash
 
 $ npx yarn
