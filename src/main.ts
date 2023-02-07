@@ -29,3 +29,5 @@ async function bootstrap() {
   Logger.log('Listening at http://localhost:3000');
 }
 bootstrap();
+// storing schemas
+//npx prisma migrate dev

@@ -5,6 +5,7 @@ import { SchemaService } from './schema/schema.service';
 import { SchemaModule } from './schema/schema.module';
 import { PrismaService } from './prisma.service';
 import { ConfigModule } from '@nestjs/config';
+import { RenderingTemplatesModule } from './rendering-templates/rendering-templates.module';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { ConfigModule } from '@nestjs/config';
       isGlobal: true,
       max: 1000,
     }), // using in memory cache for now
+    RenderingTemplatesModule,
   ],
   controllers: [AppController],
   providers: [AppService, PrismaService, SchemaService],

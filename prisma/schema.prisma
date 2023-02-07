@@ -46,3 +46,10 @@ model VerifiablePresentationSchema {
   @@index([type], type: Hash)
   @@index([name], type: Hash)
 }
+
+model Template {
+  id       String @id @default(cuid())
+  schema   String
+  template String
+  type     String
+}
