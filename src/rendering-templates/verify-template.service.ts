@@ -23,7 +23,7 @@ export class VerifyTemplateService{
     async verify(template: string, schemaID: string): Promise<Boolean>{
         let HBSfields: Array<string> = this.parseHBS(template);
 
-        let requiredFields:Array<string> = this.schemaService.getSchema(schemaID)["required"];
+        let requiredFields:Array<string> = this.schemaService.getSchema(schemaID)["schema"]["required"];
         if (HBSfields.length == requiredFields.length){
             requiredFields.sort()
             requiredFields.forEach((field, index) =>{
