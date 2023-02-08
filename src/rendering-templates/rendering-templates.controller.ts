@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post, Put, Query } from '@nestjs/common';
+import { Body, ConsoleLogger, Controller, Get, Param, Post, Put, Query } from '@nestjs/common';
 import { AddTemplateDTO } from './dto/addTemplate.dto';
 import { UpdateTemplateDTO } from './dto/updateTemplate.dto';
 import { RenderingTemplatesService } from './rendering-templates.service';
@@ -21,13 +21,8 @@ export class RenderingTemplatesController {
   }
 
   @Post()
-  addTemplate(@Body() addTemplateDto: AddTemplateDTO, verifier: VerifyTemplateService) {
-    if(verifier.verify(addTemplateDto.template, addTemplateDto.schema)){
-      return this.renderingTemplateService.addTemplate(addTemplateDto);
-    }
-    else{
-      return "Template could not be verified against Schema";
-    }
+  addTemplate(@Body() addTemplateDto: AddTemplateDTO) {
+    return this.renderingTemplateService.addTemplate(addTemplateDto); 
   }
 
   @Put()

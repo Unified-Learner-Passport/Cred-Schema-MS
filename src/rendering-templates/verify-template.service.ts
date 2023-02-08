@@ -20,27 +20,29 @@ export class VerifyTemplateService{
 
     }
 
-    async verify(template: string, schemaID: string): Promise<Boolean>{
+     async verify(template: string, schemaID: string): Promise<boolean> {
+        try{
         let HBSfields: Array<string> = this.parseHBS(template);
 
-        let requiredFields:Array<string> = this.schemaService.getSchema(schemaID)["schema"]["required"];
+        let requiredFields:Array<string> = ( await this.schemaService.credentialSchema({id:schemaID})).schema["required"];
+        console.log(requiredFields);
         if (HBSfields.length == requiredFields.length){
             requiredFields.sort()
-            requiredFields.forEach((field, index) =>{
-                if (field != HBSfields[index]){
+            for (let index = 0; index < HBSfields.length; index++) {
+                let field = '{{'+requiredFields[index]+'}}'
+                //if strings do not match:
+                if (field.localeCompare(HBSfields[index])===1 || field.localeCompare(HBSfields[index])===-1){
                     return false;
                 }
-                else{
-                    return true;
-                }
 
-            })
-
-
+              } 
+            return true;
         }
         else{
             console.log("Number of fields in HBS file does not match required field list in schema");
             return false;
+        }} catch(err){
+            throw new InternalServerErrorException(err);
         }
 
 

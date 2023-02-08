@@ -46,6 +46,7 @@ export class SchemaService {
   async credentialSchema(
     userWhereUniqueInput: Prisma.VerifiableCredentialSchemaWhereUniqueInput,
   ): Promise<VerifiableCredentialSchema> {
+    console.log(userWhereUniqueInput);
     const schema = await this.prisma.verifiableCredentialSchema.findUnique({
       where: userWhereUniqueInput,
     });
