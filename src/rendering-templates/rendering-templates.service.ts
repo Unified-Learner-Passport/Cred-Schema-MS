@@ -42,12 +42,7 @@ export class RenderingTemplatesService {
         });
       }
       else{
-        return {
-          id: "",
-        schema:  "",
-        template: "",
-        type:"Template-Schema mismatch. Please make sure template fields adhere to required schema fields."
-        };
+        throw new InternalServerErrorException("Template-Schema mismatch, please check if fields in the incoming template match the fields in corresponding schema")
       }
 
       
