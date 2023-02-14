@@ -74,7 +74,7 @@ export class SchemaController {
     return this.schemaService.credentialSchema({ id: query.id });
   }
 
-  @Get()
+  @Get('/tags')
   @ApiQuery({ name: 'id', required: true, type: String })
   @ApiOperation({ summary: 'Get a Verifiable Credential Schema by id (did)' })
   @ApiOkResponse({
@@ -108,11 +108,12 @@ export class SchemaController {
   })
   @ApiBadRequestResponse({
     status: 400,
-    description: 'There was some prioblem with the request.',
+    description: 'There was some problem with the request.',
   })
   createCredentialSchema(
     @Body() body: CreateCredentialDTO,
   ): Promise<VerifiableCredentialSchema> {
+    console.log(body);
     return this.schemaService.createCredentialSchema(body);
   }
 
