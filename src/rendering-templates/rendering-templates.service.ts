@@ -4,11 +4,11 @@ import { template } from 'handlebars';
 import { type } from 'os';
 import { PrismaService } from 'src/prisma.service';
 import { AddTemplateDTO } from './dto/addTemplate.dto';
-import { VerifyTemplateService } from './verify-template.service';
+import { ValidateTemplateService } from './validate-template.service';
 
 @Injectable()
 export class RenderingTemplatesService {
-  constructor(private prisma: PrismaService,private readonly verifier: VerifyTemplateService) {}
+  constructor(private prisma: PrismaService,private readonly verifier: ValidateTemplateService) {}
 
   async getTemplateBySchemaID(schemaID: string): Promise<Template[]> {
     try {
@@ -42,12 +42,7 @@ export class RenderingTemplatesService {
         });
       }
       else{
-        return {
-          id: "",
-        schema:  "",
-        template: "",
-        type:"Template-Schema mismatch. Please make sure template fields adhere to required schema fields."
-        };
+        throw new InternalServerErrorException("Template-Schema mismatch, please check if fields in the incoming template match the fields in corresponding schema")
       }
 
       
@@ -69,6 +64,17 @@ export class RenderingTemplatesService {
           type: updateTemplateDto.type,
         },
       });
+    } catch (err) {
+      throw new InternalServerErrorException(err);
+    }
+  }
+  async deleteTemplate(
+    id: string
+  ): Promise<any> {
+    try{
+      return await this.prisma.template.delete({
+        where: {id: id}
+      })
     } catch (err) {
       throw new InternalServerErrorException(err);
     }

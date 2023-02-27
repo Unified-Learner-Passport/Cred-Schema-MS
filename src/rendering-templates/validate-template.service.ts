@@ -5,7 +5,7 @@ import { SchemaService } from "src/schema/schema.service";
 
  
 @Injectable()
-export class VerifyTemplateService{
+export class ValidateTemplateService{
     constructor (private schemaService: SchemaService) {}
 
 

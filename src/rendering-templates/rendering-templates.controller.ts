@@ -1,8 +1,7 @@
-import { Body, ConsoleLogger, Controller, Get, Param, Post, Put, Query } from '@nestjs/common';
+import { Body, ConsoleLogger, Controller, Delete, Get, Param, Post, Put, Query } from '@nestjs/common';
 import { AddTemplateDTO } from './dto/addTemplate.dto';
 import { UpdateTemplateDTO } from './dto/updateTemplate.dto';
 import { RenderingTemplatesService } from './rendering-templates.service';
-import { VerifyTemplateService } from './verify-template.service';
 
 @Controller('rendering-template')
 export class RenderingTemplatesController {
@@ -31,5 +30,9 @@ export class RenderingTemplatesController {
       updateTemplateDto.id,
       updateTemplateDto,
     );
+  }
+  @Delete()
+  deleteTemplate(@Query('id') id:string) {
+    return this.renderingTemplateService.deleteTemplate(id);
   }
 }
