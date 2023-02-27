@@ -61,12 +61,13 @@ export class SchemaService {
     // verify the Credential Schema
     const data = createCredentialDto.schema;
     const tags = createCredentialDto.tags;
-
     if (validate(data)) {
       try {
+        // generate DID using identity MS
+
         return await this.prisma.verifiableCredentialSchema.create({
           data: {
-            id: data.id,
+            // id: data.id,
             type: data?.type as string,
             version: data.version,
             name: data.name as string,
@@ -92,6 +93,7 @@ export class SchemaService {
     data: VCSModelSchemaInterface;
   }): Promise<VerifiableCredentialSchema> {
     const { where, data } = params;
+    console.log('where: ', where);
     const currentSchema =
       await this.prisma.verifiableCredentialSchema.findUnique({
         where,
