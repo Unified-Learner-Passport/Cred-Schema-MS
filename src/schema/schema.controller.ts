@@ -58,7 +58,7 @@ export class SchemaController {
 
   // TODO: Add role based guards here
   @Get(':id')
-  @ApiQuery({ name: 'id', required: true, type: String })
+  // @ApiQuery({ name: 'id', required: true, type: String })
   @ApiOperation({ summary: 'Get a Verifiable Credential Schema by id (did)' })
   @ApiOkResponse({
     status: 200,
@@ -137,7 +137,7 @@ export class SchemaController {
   })
   @ApiBadRequestResponse({
     status: 400,
-    description: 'There was some prioblem with the request.',
+    description: 'There was some problem with the request.',
   })
   updateCredentialSchema(
     @Param('id') id,
