@@ -83,3 +83,4 @@ Nest is [MIT licensed](LICENSE).
 - [W3C Credential Schema (Currently being used)](https://w3c-ccg.github.io/vc-json-schemas/schema/2.0/schema.json)
 - [W3C Credential Schema (initially used)](https://w3c-ccg.github.io/vc-json-schemas/schema/1.0/schema.json)
 - [W3C JSON Schemas Website](https://w3c-ccg.github.io/vc-json-schemas/)
+- [API Documentation](https://github.com/Sunbird-RC/sunbird-rc-core/tree/main/api-documentation)
