@@ -9,8 +9,8 @@ export class RenderingTemplatesController {
     private readonly renderingTemplateService: RenderingTemplatesService,
   ) {}
 
-  @Get(':schemaId')
-  getTemplateBySchemaID(@Param('schemaId') schemaId: string) {
+  @Get()
+  getTemplateBySchemaID(@Query() schemaId: string) {
     return this.renderingTemplateService.getTemplateBySchemaID(schemaId);
   }
 

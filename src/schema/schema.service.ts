@@ -16,15 +16,15 @@ import { CreateCredentialDTO } from './dto/create-credentials.dto';
 export class SchemaService {
   constructor(private readonly prisma: PrismaService) {}
 
-  getSchema(fileName: string): JSON {
-    if (Object.keys(schemas).indexOf(fileName) === -1) {
-      throw new NotFoundException(
-        `Resource ${fileName}.json does not exist on the server`,
-      );
-    }
+  // getSchema(fileName: string): JSON {
+  //   if (Object.keys(schemas).indexOf(fileName) === -1) {
+  //     throw new NotFoundException(
+  //       `Resource ${fileName}.json does not exist on the server`,
+  //     );
+  //   }
 
-    return schemas[fileName];
-  }
+  //   return schemas[fileName];
+  // }
 
   /*  async credentialSchemas(params: {
       skip?: number;
@@ -46,7 +46,7 @@ export class SchemaService {
   async credentialSchema(
     userWhereUniqueInput: Prisma.VerifiableCredentialSchemaWhereUniqueInput,
   ): Promise<VerifiableCredentialSchema> {
-    console.log(userWhereUniqueInput);
+    
     const schema = await this.prisma.verifiableCredentialSchema.findUnique({
       where: userWhereUniqueInput,
     });

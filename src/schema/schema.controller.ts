@@ -6,7 +6,7 @@ import {
   Get,
   Inject,
   Param,
-  Patch,
+  Put,
   Post,
   Query,
   UseInterceptors,
@@ -30,7 +30,7 @@ import { VCItem } from './entities/VCItem.entity';
 import { VCModelSchema } from './entities/VCModelSchema.entity';
 import { SchemaService } from './schema.service';
 
-@Controller('schema')
+@Controller('credential-schema')
 @UseInterceptors(CacheInterceptor)
 export class SchemaController {
   constructor(
@@ -39,25 +39,25 @@ export class SchemaController {
   ) {}
 
   // this should be public
-  @Get(':id')
-  @ApiParam({
-    name: 'id',
-    required: true,
-    type: String,
-    description: 'name of the json schema files stored on the server',
-  })
-  @ApiOkResponse({ type: VCModelSchema })
-  @ApiNotFoundResponse({
-    status: 404,
-    description:
-      'The record with the passed query param id has not been found.',
-  })
-  getSchema(@Param('id') id: string) {
-    return this.schemaService.getSchema(id);
-  }
+  // @Get(':id')
+  // @ApiParam({
+  //   name: 'id',
+  //   required: true,
+  //   type: String,
+  //   description: 'ID of the json schema files stored on the server',
+  // })
+  // @ApiOkResponse({ type: VCModelSchema })
+  // @ApiNotFoundResponse({
+  //   status: 404,
+  //   description:
+  //     'The record with the passed query param id has not been found.',
+  // })
+  // getSchema(@Param('id') id: string) {
+  //   return this.schemaService.getSchema(id);
+  // }
 
   // TODO: Add role based guards here
-  @Get('/jsonld')
+  @Get(':id')
   @ApiQuery({ name: 'id', required: true, type: String })
   @ApiOperation({ summary: 'Get a Verifiable Credential Schema by id (did)' })
   @ApiOkResponse({
@@ -69,29 +69,28 @@ export class SchemaController {
     status: 404,
     description: 'The record has not been found.',
   })
-  getCredentialSchema(@Query() query) {
-    console.log('id: ', query.id);
-    return this.schemaService.credentialSchema({ id: query.id });
+  getCredentialSchema(@Param('id') id: string) {
+    return this.schemaService.credentialSchema({ id: id });
   }
 
-  @Get('/tags')
-  @ApiQuery({ name: 'id', required: true, type: String })
-  @ApiOperation({ summary: 'Get a Verifiable Credential Schema by id (did)' })
+  @Get()
+  @ApiQuery({ name: 'tags', required: true, type: String })
+  @ApiOperation({ summary: 'Get a Verifiable Credential Schema by tags' })
   @ApiOkResponse({
     status: 200,
-    description: 'The record has been successfully created.',
+    description: 'The record has been successfully obtained',
     type: VCItem,
   })
   @ApiNotFoundResponse({
     status: 404,
     description: 'The record has not been found.',
   })
-  getCredentialSchemaByTags(@Query() query) {
-    console.log('tags: ', query.tags);
-    console.log('typeof tags: ', typeof query.tags);
-    console.log(query.tags instanceof Array);
+  getCredentialSchemaByTags(@Query('tags') tags: string) {
+    console.log(tags)
+
+
     return this.schemaService.getSchemaByTags(
-      query.tags.slice(1, -1).split(','),
+      tags.split(','),
     );
   }
 
@@ -118,8 +117,8 @@ export class SchemaController {
   }
 
   // TODO: Add role based guards here
-  @Patch()
-  @ApiQuery({ name: 'id', required: true, type: String })
+  @Put(':id')
+  // @ApiQuery({ name: 'id', required: true, type: String })
   @ApiBody({
     type: VCModelSchema,
   })
@@ -134,20 +133,18 @@ export class SchemaController {
   @ApiNotFoundResponse({
     status: 404,
     description:
-      'The record with the passed query param id has not been found.',
+      'The record with the passed param id has not been found.',
   })
   @ApiBadRequestResponse({
     status: 400,
     description: 'There was some prioblem with the request.',
   })
   updateCredentialSchema(
-    @Query() query,
+    @Param('id') id,
     @Body() data: VCSModelSchemaInterface,
   ) {
-    console.log('id: ', query.id);
-    console.log('body: ', data);
     return this.schemaService.updateCredentialSchema({
-      where: { id: query.id },
+      where: { id: id },
       data,
     });
   }

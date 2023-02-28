@@ -1,4 +1,4 @@
-import { HttpException, HttpStatus, Injectable, InternalServerErrorException } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { Template } from '@prisma/client';
 import { template } from 'handlebars';
 import { type } from 'os';
@@ -92,7 +92,7 @@ export class RenderingTemplatesService {
         }
       })
       if (templateToBeDeleted.deleted == true) {
-        throw new HttpException('Record not found', HttpStatus.NOT_FOUND )
+        throw new NotFoundException('Record not found');
       }
       return await this.prisma.template.update({
         where: {
