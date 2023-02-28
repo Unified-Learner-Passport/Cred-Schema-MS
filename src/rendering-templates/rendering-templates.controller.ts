@@ -17,7 +17,7 @@ export class RenderingTemplatesController {
   @ApiOkResponse(
     { status: 200 }
   )
-  getTemplateBySchemaID(@Query() schemaId: string) {
+  getTemplateBySchemaID(@Query('schemaId') schemaId: string) {
     return this.renderingTemplateService.getTemplateBySchemaID(schemaId);
   }
 

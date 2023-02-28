@@ -1,10 +1,8 @@
-import { HttpException, HttpStatus, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
+import {Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { Template } from '@prisma/client';
-import { template } from 'handlebars';
 import { type } from 'os';
 import { PrismaService } from 'src/prisma.service';
 import { AddTemplateDTO } from './dto/addTemplate.dto';
-import { TEMPLATE_STATUS } from './enums/templateStatus.enum';
 import { ValidateTemplateService } from './validate-template.service';
 
 @Injectable()
@@ -13,6 +11,7 @@ export class RenderingTemplatesService {
 
   async getTemplateBySchemaID(schemaID: string): Promise<Template[]> {
     try {
+      console.log(schemaID);
       return await this.prisma.template.findMany({
         where: { schema: schemaID },
       });

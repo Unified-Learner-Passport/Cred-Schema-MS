@@ -46,7 +46,7 @@ export class SchemaService {
   async credentialSchema(
     userWhereUniqueInput: Prisma.VerifiableCredentialSchemaWhereUniqueInput,
   ): Promise<VerifiableCredentialSchema> {
-    
+
     const schema = await this.prisma.verifiableCredentialSchema.findUnique({
       where: userWhereUniqueInput,
     });
@@ -67,7 +67,7 @@ export class SchemaService {
 
         return await this.prisma.verifiableCredentialSchema.create({
           data: {
-            // id: data.id,
+            id: data.id,
             type: data?.type as string,
             version: data.version,
             name: data.name as string,
@@ -93,7 +93,6 @@ export class SchemaService {
     data: VCSModelSchemaInterface;
   }): Promise<VerifiableCredentialSchema> {
     const { where, data } = params;
-    console.log('where: ', where);
     const currentSchema =
       await this.prisma.verifiableCredentialSchema.findUnique({
         where,
@@ -104,7 +103,7 @@ export class SchemaService {
           return await this.prisma.verifiableCredentialSchema.update({
             where,
             data: {
-              id: data.id,
+              // not updating ID, since ID should not be changed
               type: data?.type as string,
               version: data.version,
               name: data.name as string,
