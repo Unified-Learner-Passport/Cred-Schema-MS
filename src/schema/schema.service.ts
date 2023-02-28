@@ -67,7 +67,7 @@ export class SchemaService {
 
         return await this.prisma.verifiableCredentialSchema.create({
           data: {
-            id: data.id,
+            //id: data.id,
             type: data?.type as string,
             version: data.version,
             name: data.name as string,
