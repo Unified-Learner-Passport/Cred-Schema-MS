@@ -58,9 +58,9 @@ export class RenderingTemplatesService {
   async updateTemplate(
     id: string,
     updateTemplateDto: AddTemplateDTO,
-  ): Promise<{'count': number}> { //returns the number of records affected by updatemany
+  ): Promise<Template> { //returns the number of records affected by updatemany
     try {
-      return await this.prisma.template.updateMany({
+      await this.prisma.template.updateMany({
         where: {
           id: id,
           deleted: false,
@@ -71,6 +71,13 @@ export class RenderingTemplatesService {
           type: updateTemplateDto.type,
         },
       });
+      return this.prisma.template.findUnique(
+        {
+          where:{
+            id:id,
+          }
+        }
+      )
     } catch (err) {
       throw new InternalServerErrorException(err);
     }

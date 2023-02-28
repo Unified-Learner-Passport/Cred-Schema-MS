@@ -3,7 +3,7 @@ import { AddTemplateDTO } from './dto/addTemplate.dto';
 import { UpdateTemplateDTO } from './dto/updateTemplate.dto';
 import { RenderingTemplatesService } from './rendering-templates.service';
 
-@Controller('rendering-template')
+@Controller('template')
 export class RenderingTemplatesController {
   constructor(
     private readonly renderingTemplateService: RenderingTemplatesService,
@@ -14,8 +14,8 @@ export class RenderingTemplatesController {
     return this.renderingTemplateService.getTemplateBySchemaID(schemaId);
   }
 
-  @Get()
-  getTemplateById(@Query('id') id: string) {
+  @Get(':id')
+  getTemplateById(@Param('id') id: string) {
     return this.renderingTemplateService.getTemplateById(id);
   }
 
@@ -24,10 +24,10 @@ export class RenderingTemplatesController {
     return this.renderingTemplateService.addTemplate(addTemplateDto); 
   }
 
-  @Put()
-  updateTemplate(@Body() updateTemplateDto: UpdateTemplateDTO) {
+  @Put(':id')
+  updateTemplate(@Param('id') id: string, @Body() updateTemplateDto: UpdateTemplateDTO) {
     return this.renderingTemplateService.updateTemplate(
-      updateTemplateDto.id,
+      id,
       updateTemplateDto,
     );
   }
