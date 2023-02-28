@@ -1,9 +1,10 @@
-import { Injectable, InternalServerErrorException } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable, InternalServerErrorException } from '@nestjs/common';
 import { Template } from '@prisma/client';
 import { template } from 'handlebars';
 import { type } from 'os';
 import { PrismaService } from 'src/prisma.service';
 import { AddTemplateDTO } from './dto/addTemplate.dto';
+import { TEMPLATE_STATUS } from './enums/templateStatus.enum';
 import { ValidateTemplateService } from './validate-template.service';
 
 @Injectable()
@@ -22,8 +23,11 @@ export class RenderingTemplatesService {
 
   async getTemplateById(id: string): Promise<Template> {
     try {
-      return await this.prisma.template.findUnique({
-        where: { id: id },
+      return await this.prisma.template.findFirst({
+        where: {
+            id: id,
+            deleted: false,
+        },
       });
     } catch (err) {
       throw new InternalServerErrorException(err);
@@ -54,10 +58,13 @@ export class RenderingTemplatesService {
   async updateTemplate(
     id: string,
     updateTemplateDto: AddTemplateDTO,
-  ): Promise<Template> {
+  ): Promise<{'count': number}> { //returns the number of records affected by updatemany
     try {
-      return await this.prisma.template.update({
-        where: { id: id },
+      return await this.prisma.template.updateMany({
+        where: {
+          id: id,
+          deleted: false,
+        },
         data: {
           schema: updateTemplateDto.schema,
           template: updateTemplateDto.template,
@@ -70,10 +77,23 @@ export class RenderingTemplatesService {
   }
   async deleteTemplate(
     id: string
-  ): Promise<any> {
+  ): Promise<Template> {
     try{
-      return await this.prisma.template.delete({
-        where: {id: id}
+      const templateToBeDeleted = await this.prisma.template.findUnique({
+        where: {
+          id: id,
+        }
+      })
+      if (templateToBeDeleted.deleted == true) {
+        throw new HttpException('Record not found', HttpStatus.NOT_FOUND )
+      }
+      return await this.prisma.template.update({
+        where: {
+            id: id
+        } ,
+        data: {
+          deleted: true,
+        },
       })
     } catch (err) {
       throw new InternalServerErrorException(err);

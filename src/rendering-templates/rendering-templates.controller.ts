@@ -31,8 +31,8 @@ export class RenderingTemplatesController {
       updateTemplateDto,
     );
   }
-  @Delete()
-  deleteTemplate(@Query('id') id:string) {
+  @Delete(':id')
+  deleteTemplate(@Param('id') id:string) {
     return this.renderingTemplateService.deleteTemplate(id);
   }
 }

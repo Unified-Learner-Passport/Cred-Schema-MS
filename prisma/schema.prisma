@@ -8,7 +8,12 @@ generator client {
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
-  // shadowDatabaseUrl = env("SHADOW_DATABASE_URL")
+  shadowDatabaseUrl = env("SHADOW_DATABASE_URL")
+}
+
+enum Status {
+  VALID
+  DELETED
 }
 
 model VerifiableCredentialSchema {
@@ -52,4 +57,5 @@ model Template {
   schema   String
   template String
   type     String
+  deleted  Boolean    @default(false)
 }
