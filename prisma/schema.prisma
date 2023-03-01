@@ -25,7 +25,7 @@ model VerifiableCredentialSchema {
   author    String
   authored  DateTime
   schema    Json
-  proof     Json?
+  proof     Json
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
   deletedAt DateTime?
