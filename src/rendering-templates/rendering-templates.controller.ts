@@ -64,6 +64,8 @@ export class RenderingTemplatesController {
   }
   @Delete(':id')
   deleteTemplate(@Param('id') id:string) {
-    return this.renderingTemplateService.deleteTemplate(id);
+    if(this.renderingTemplateService.deleteTemplate(id)){
+      return "Credential Schema successfully deleted!";
+    };
   }
 }

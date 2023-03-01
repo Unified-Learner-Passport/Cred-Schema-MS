@@ -10,8 +10,10 @@ export class ValidateTemplateService{
 
 
     private parseHBS(HBSstr: string):Array<string>{
+        //console.log(HBSstr);
         let HBSfields: Array<string> = HBSstr.match(/{{[{]?(.*?)[}]?}}/g)
-        HBSfields.forEach((fieldname:string) => {
+        HBSfields.forEach((fieldname:string) => {     
+            //console.log(fieldname);       
             let len = fieldname.length
             fieldname = fieldname.slice(2, len-2);
         })
@@ -24,8 +26,8 @@ export class ValidateTemplateService{
         try{
         let HBSfields: Array<string> = this.parseHBS(template);
 
-        let requiredFields:Array<string> = ( await this.schemaService.credentialSchema({id:schemaID})).schema["required"];
-        console.log(requiredFields);
+        let requiredFields:Array<string> = ( await this.schemaService.credentialSchema({id:schemaID})).schema["schema"]["required"];
+        //console.log(requiredFields);
         if (HBSfields.length == requiredFields.length){
             requiredFields.sort()
             for (let index = 0; index < HBSfields.length; index++) {
