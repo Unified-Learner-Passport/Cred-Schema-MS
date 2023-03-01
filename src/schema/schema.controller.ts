@@ -21,14 +21,38 @@ import {
   ApiParam,
   ApiQuery,
 } from '@nestjs/swagger';
-import { VerifiableCredentialSchema } from '@prisma/client';
+import { Status as PrismaStatus, VerifiableCredentialSchema } from '@prisma/client';
 import { Cache } from 'cache-manager';
+import { type } from 'os';
 
 import { VCSModelSchemaInterface } from 'src/types/VCModelSchema.interface';
 import { CreateCredentialDTO } from './dto/create-credentials.dto';
 import { VCItem } from './entities/VCItem.entity';
 import { VCModelSchema } from './entities/VCModelSchema.entity';
 import { SchemaService } from './schema.service';
+
+type schemaResponse = {
+  schema: {
+    // type: string,
+    // id: string, 
+    // version: string,
+    // name: string,
+    // author: string,
+    // authored: string,
+    // schema: {
+
+    // }
+    // proof: {
+
+    // }
+  }
+  tags: string[], 
+  status: PrismaStatus, 
+  createdAt: string,
+  createdBy: string,
+  updatedAt: string,
+  updatedBy: string,
+}
 
 @Controller('credential-schema')
 @UseInterceptors(CacheInterceptor)
@@ -85,10 +109,8 @@ export class SchemaController {
     status: 404,
     description: 'The record has not been found.',
   })
-  getCredentialSchemaByTags(@Query('tags') tags: string) {
+  getCredentialSchemaByTags(@Query('tags') tags: string){
     console.log(tags)
-
-
     return this.schemaService.getSchemaByTags(
       tags.split(','),
     );
@@ -111,7 +133,7 @@ export class SchemaController {
   })
   createCredentialSchema(
     @Body() body: CreateCredentialDTO,
-  ): Promise<VerifiableCredentialSchema> {
+  ): Promise<schemaResponse> {
     console.log(body);
     return this.schemaService.createCredentialSchema(body);
   }

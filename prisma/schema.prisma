@@ -12,8 +12,9 @@ datasource db {
 }
 
 enum Status {
-  VALID
-  DELETED
+  DRAFT
+  PUBLISHED
+  REVOKED
 }
 
 model VerifiableCredentialSchema {
@@ -24,11 +25,14 @@ model VerifiableCredentialSchema {
   author    String
   authored  DateTime
   schema    Json
-  proof     Json
+  proof     Json?
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
   deletedAt DateTime?
+  createdBy String?
+  updatedBy String?
   tags      String[]
+  status    Status    @default(DRAFT)
 
   @@index([type], type: Hash)
   @@index([name], type: Hash)
@@ -53,9 +57,13 @@ model VerifiablePresentationSchema {
 }
 
 model Template {
-  id       String @id @default(cuid())
-  schema   String
-  template String
-  type     String
-  deleted  Boolean    @default(false)
+  id        String     @id @default(cuid())
+  schema    String
+  template  String
+  type      String
+  deleted   Boolean    @default(false)
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  createdBy String?
+  updatedBy String?     
 }

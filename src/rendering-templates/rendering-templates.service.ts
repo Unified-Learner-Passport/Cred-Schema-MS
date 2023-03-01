@@ -41,6 +41,9 @@ export class RenderingTemplatesService {
             schema: addTemplateDto.schema,
             template: addTemplateDto.template,
             type: addTemplateDto.type,
+            //These need to be obtained properly, not sure from where
+            // createdBy: '',
+            // updatedBy: '',
           },
         });
       }
