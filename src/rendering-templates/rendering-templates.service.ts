@@ -1,7 +1,7 @@
 import {Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { Template } from '@prisma/client';
 import { type } from 'os';
-import { PrismaService } from 'src/prisma.service';
+import { PrismaService } from '../prisma.service';
 import { AddTemplateDTO } from './dto/addTemplate.dto';
 import { ValidateTemplateService } from './validate-template.service';
 

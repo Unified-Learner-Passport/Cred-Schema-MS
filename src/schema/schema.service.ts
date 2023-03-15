@@ -4,7 +4,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { Prisma, VerifiableCredentialSchema, Status as PrismaStatus } from '@prisma/client';
-import { PrismaService } from 'src/prisma.service';
+import { PrismaService } from '../prisma.service';
 import schemas from './schemas';
 import { validate } from '../utils/schema.validator';
 import { DefinedError } from 'ajv';
