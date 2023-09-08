@@ -1,55 +1,83 @@
-import { Injectable, InternalServerErrorException } from "@nestjs/common";
-import { flatten } from "@nestjs/common";
-import { SchemaService } from "src/schema/schema.service";
+import {
+  Injectable,
+  InternalServerErrorException,
+  Logger,
+} from '@nestjs/common';
+import { SchemaService } from '../schema/schema.service';
+import { TemplateWarnings } from './types/TemplateWarnings.interface';
 
-
- 
 @Injectable()
-export class ValidateTemplateService{
-    constructor (private schemaService: SchemaService) {}
+export class ValidateTemplateService {
+  constructor(private schemaService: SchemaService) {}
+  private logger = new Logger(ValidateTemplateService.name);
+  private parseHBSTemplate(HBSstr: string): Array<string> {
+    const hbsfields: Array<string> = HBSstr.match(/{{[{]?(.*?)[}]?}}/g);
+    hbsfields.forEach((fieldname: string) => {
+      const len = fieldname.length;
+      fieldname = fieldname.slice(2, len - 2);
+    });
+    hbsfields.sort();
+    return hbsfields;
+  }
 
-
-    private parseHBS(HBSstr: string):Array<string>{
-        let HBSfields: Array<string> = HBSstr.match(/{{[{]?(.*?)[}]?}}/g)
-        HBSfields.forEach((fieldname:string) => {
-            let len = fieldname.length
-            fieldname = fieldname.slice(2, len-2);
+  async validateTemplateAgainstSchema(
+    template: string,
+    schemaID: string,
+    schemaVersion: string,
+  ): Promise<TemplateWarnings | null> {
+    try {
+      const hbsfields: Array<string> = this.parseHBSTemplate(template);
+      const requiredFields: Array<string> = (
+        await this.schemaService.getCredentialSchemaByIdAndVersion({
+          id_version: {
+            id: schemaID,
+            version: schemaVersion,
+          },
         })
-        HBSfields.sort()
-        return HBSfields;
+      ).schema.schema['required'];
+      this.logger.debug('Required fields in Template', requiredFields);
 
-    }
+      if (hbsfields.length == requiredFields.length) {
+        requiredFields.sort();
+        for (let index = 0; index < hbsfields.length; index++) {
+          const field = '{{' + requiredFields[index] + '}}';
+          //if strings do not match:
+          if (
+            field.localeCompare(hbsfields[index]) === 1 ||
+            field.localeCompare(hbsfields[index]) === -1
+          ) {
+            this.logger.log(
+              'Template not validated against schema successfully, strings do not match',
+            );
 
-     async verify(template: string, schemaID: string): Promise<boolean> {
-        try{
-        let HBSfields: Array<string> = this.parseHBS(template);
+            return {
+              message:
+                'Template not validated against schema successfully, strings do not match',
 
-        let requiredFields:Array<string> = ( await this.schemaService.credentialSchema({id:schemaID})).schema["required"];
-        console.log(requiredFields);
-        if (HBSfields.length == requiredFields.length){
-            requiredFields.sort()
-            for (let index = 0; index < HBSfields.length; index++) {
-                let field = '{{'+requiredFields[index]+'}}'
-                //if strings do not match:
-                if (field.localeCompare(HBSfields[index])===1 || field.localeCompare(HBSfields[index])===-1){
-                    return false;
-                }
-
-              } 
-            return true;
+              hsbsFields: hbsfields,
+              requiredFields: requiredFields,
+            };
+          }
         }
-        else{
-            console.log("Number of fields in HBS file does not match required field list in schema");
-            return false;
-        }} catch(err){
-            throw new InternalServerErrorException(err);
-        }
-
-
-
-
+        this.logger.log('Template validated successfully');
+        return;
+      } else {
+        this.logger.log(
+          'Number of fields in HBS file does not match required field list in schema',
+        );
+        return {
+          message:
+            'Number of fields in HBS file does not match required field list in schema',
+          hsbsFields: hbsfields,
+          requiredFields: requiredFields,
+        };
+      }
+    } catch (err) {
+      this.logger.error(err);
+      throw new InternalServerErrorException(
+        err,
+        'Error while validating template for required fields with schema',
+      );
     }
-
-
-
+  }
 }

@@ -1,5 +1,6 @@
 export class AddTemplateDTO {
-  schema: string;
+  schemaId: string;
+  schemaVersion: string;
   template: string;
   type: string;
 }
