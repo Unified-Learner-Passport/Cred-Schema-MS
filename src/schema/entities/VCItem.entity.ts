@@ -29,4 +29,9 @@ export class VCItem implements VerifiableCredentialSchema {
   deletedAt: Date | null;
   @ApiProperty({ type: [String], description: 'tags' })
   tags: string[];
+  @ApiProperty({ type: String, description: 'status' })
+  status: any;
+  createdBy: string;
+  updatedBy: string;
+  deprecatedId: string;
 }

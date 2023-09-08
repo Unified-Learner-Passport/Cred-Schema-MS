@@ -1,3 +1,5 @@
+![Tests](https://github.com/SamagraX-RCW/schema/actions/workflows/ci.yml/badge.svg)
+
 # Credential Schema Microservice
 
 ## Description
@@ -11,12 +13,15 @@
 $ npm install
 
 ```
+
 OR
+
 ```bash
 
 $ npx yarn
 
 ```
+
 ## Running the app
 
 ```bash
